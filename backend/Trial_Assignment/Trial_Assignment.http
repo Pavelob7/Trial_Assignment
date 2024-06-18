@@ -1,6 +1,0 @@
-@Trial_Assignment_HostAddress = http://localhost:5027
-
-GET {{Trial_Assignment_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
