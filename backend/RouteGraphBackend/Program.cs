@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 using RouteGraphBackend.Data; // Убедитесь, что это пространство имён правильное
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,9 +17,11 @@ builder.Services.AddDbContext<RouteGraphBackend.Data.RouteContext>(options =>
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles; // Или NullReferenceHandler, в зависимости от предпочтений
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     });
-builder.Services.AddLogging(); // Добавляем логирование
+builder.Services.AddLogging();// Добавляем логирование
 
 var app = builder.Build();
 

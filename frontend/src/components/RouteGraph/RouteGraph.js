@@ -15,35 +15,44 @@ const RouteGraph = () => {
 
     // Загрузка данных с сервера при монтировании компонента
     useEffect(() => {
-        fetch('/jsons/route.json')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((json) => {
-                console.log("Data fetched:", json);
-                setData(json); // Установка полученных данных в состояние
-                const firstRoute = Object.keys(json)[0]; // Выбор первого маршрута по умолчанию
-                setSelectedRoute(firstRoute); // Установка выбранного маршрута
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error); // Обработка ошибки загрузки данных
-            });
-    }, []); // Пустой массив зависимостей для выполнения эффекта один раз при монтировании
+        // Функция для загрузки данных с сервера
+        const fetchData = () => {
+            fetch('/api/routeData') // Путь к вашему API
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((json) => {
+                    console.log("Data fetched:", json);
+                    setData(json);
+                    const firstRoute = Object.keys(json)[0];
+                    setSelectedRoute(firstRoute);
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                });
+        };
 
-    // Обработчик загрузки файла на сервер
-    const handleFileUpload = (file) => {
+        fetchData();
+    }, []);// Пустой массив зависимостей для выполнения эффекта один раз при монтировании
+
+     // Обработчик загрузки файла на сервер
+     const handleFileUpload = (file) => {
         const formData = new FormData();
         formData.append('file', file);
 
-        fetch('/upload', {
+        fetch('/api/FileUpload/upload', { // Путь к API методу загрузки файла
             method: 'POST',
             body: formData,
         })
-            .then(response => {
-                console.log('Файл успешно загружен на сервер');
+            .then(response => response.json())
+            .then(jsonResponse => {
+                console.log('JSON response from server:', jsonResponse);
+                setData(jsonResponse); // Обновляем данные с сервера
+                const firstRoute = Object.keys(jsonResponse)[0];
+                setSelectedRoute(firstRoute); // Устанавливаем первый маршрут после обновления данных
             })
             .catch(error => {
                 console.error('Ошибка при загрузке файла на сервер:', error);
