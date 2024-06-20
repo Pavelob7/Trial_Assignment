@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using RouteGraphBackend.Models;
@@ -33,12 +32,41 @@ namespace RouteGraphBackend.Controllers
 
             try
             {
-                string jsonResponse = await CreateJsonResponse(file);
+                using var transaction = await _context.Database.BeginTransactionAsync();
 
-                if (jsonResponse == null)
+                var (points, tracks) = await ReadPointsAndTracksFromExcel(file);
+
+                if (points == null || tracks == null)
                 {
                     return BadRequest("Invalid data format in Excel file.");
                 }
+
+                // Создаем новую запись в таблице Uploads
+                var upload = new Upload
+                {
+                    UploadTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds() // или другое значение времени загрузки
+                };
+                _context.Uploads.Add(upload);
+                await _context.SaveChangesAsync(); // Сохраняем изменения, чтобы получить UploadId
+
+                // Привязываем точки и треки к созданной загрузке
+                foreach (var point in points)
+                {
+                    point.UploadId = upload.UploadId;
+                    _context.Points.Add(point);
+                }
+
+                foreach (var track in tracks)
+                {
+                    track.UploadId = upload.UploadId;
+                    _context.Tracks.Add(track);
+                }
+
+                await _context.SaveChangesAsync(); // Сохраняем изменения в базе данных
+                await transaction.CommitAsync(); // Фиксируем транзакцию
+
+                // Создаем JSON-ответ
+                var jsonResponse = await CreateJsonResponse(file, upload.UploadId);
 
                 return Ok(jsonResponse);
             }
@@ -48,7 +76,7 @@ namespace RouteGraphBackend.Controllers
             }
         }
 
-        private async Task<string> CreateJsonResponse(IFormFile file)
+        private async Task<string> CreateJsonResponse(IFormFile file, int uploadId)
         {
             var (points, tracks) = await ReadPointsAndTracksFromExcel(file);
 
@@ -57,29 +85,33 @@ namespace RouteGraphBackend.Controllers
                 return null;
             }
 
-            // Генерация уникального времени для UploadId
-            long uploadTimeUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-            // Формирование объекта JSON
+            // Формируем объект JSON
             var responseObject = new Dictionary<long, object>
             {
-                { uploadTimeUnix, new {
-                    points = points.Select(p => new {
-                        id = p.Id,
-                        name = p.Name,
-                        height = p.Height
-                    }).ToList<object>(),
-                    tracks = tracks.Select(t => new {
-                        firstId = t.FirstId,
-                        secondId = t.SecondId,
-                        distance = t.Distance,
-                        surface = t.Surface.ToString().ToUpper(),
-                        maxSpeed = t.MaxSpeed.ToString().ToUpper()
-                    }).ToList<object>()
-                }}
+                {
+                    DateTimeOffset.UtcNow.ToUnixTimeSeconds(), new
+                    {
+                        points = points.Select(p => new
+                        {
+                            id = p.Id,
+                            name = p.Name,
+                            height = p.Height,
+                            uploadId = uploadId
+                        }).ToList<object>(),
+                        tracks = tracks.Select(t => new
+                        {
+                            firstId = t.FirstId,
+                            secondId = t.SecondId,
+                            distance = t.Distance,
+                            surface = t.Surface.ToString().ToUpper(),
+                            maxSpeed = t.MaxSpeed.ToString().ToUpper(),
+                            uploadId = uploadId
+                        }).ToList<object>()
+                    }
+                }
             };
 
-            // Преобразование объекта в JSON-строку
+            // Преобразуем в JSON-строку
             string jsonResponse = JsonSerializer.Serialize(responseObject);
 
             return jsonResponse;
