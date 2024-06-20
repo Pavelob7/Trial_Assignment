@@ -17,7 +17,7 @@ const RouteGraph = () => {
     useEffect(() => {
         // Функция для загрузки данных с сервера
         const fetchData = () => {
-            fetch('/api/routeData') // Путь к вашему API
+            fetch('/api/routeData/PointsAndTracks') // Путь к вашему API
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
