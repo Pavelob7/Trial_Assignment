@@ -1,5 +1,3 @@
-// RouteGraph.js
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { LineChart } from '@mui/x-charts';
 import { Box, Slider, Grid } from '@mui/material';
@@ -8,6 +6,9 @@ import { getSurfaceColor, getSpeedColor, formatUnixTime } from './RouteGraph.uti
 import DownloadExcelButton from '../DownloadExcelButton';
 import UploadFileButton from '../UploadFileButton';
 
+/**
+ * Компонент для отображения графика маршрута с возможностью загрузки данных и интерактивным управлением.
+ */
 const RouteGraph = () => {
     const [data, setData] = useState(null); // Состояние для хранения данных
     const [xAxisRange, setXAxisRange] = useState([0, 1000]); // Диапазон значений оси X
@@ -36,10 +37,10 @@ const RouteGraph = () => {
         };
 
         fetchData();
-    }, []);// Пустой массив зависимостей для выполнения эффекта один раз при монтировании
+    }, []); // Пустой массив зависимостей для выполнения эффекта один раз при монтировании
 
-     // Обработчик загрузки файла на сервер
-     const handleFileUpload = (file) => {
+    // Обработчик загрузки файла на сервер
+    const handleFileUpload = (file) => {
         const formData = new FormData();
         formData.append('file', file);
 
