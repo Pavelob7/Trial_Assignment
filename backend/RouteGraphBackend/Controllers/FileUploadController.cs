@@ -93,7 +93,7 @@ namespace RouteGraphBackend.Controllers
                     {
                         points = points.Select(p => new
                         {
-                            id = p.Id,
+                            id = p.PointId,
                             name = p.Name,
                             height = p.Height,
                             uploadId = uploadId
@@ -141,24 +141,26 @@ namespace RouteGraphBackend.Controllers
                             continue;
                         }
 
-                        string idText = worksheet.Cells[row, 1].Text;
+                        // Читаем данные из ячеек
+                        string pointIdText = worksheet.Cells[row, 1].Text;
                         string name = worksheet.Cells[row, 2].Text;
                         string heightText = worksheet.Cells[row, 3].Text;
 
                         // Проверка на пустые значения
-                        if (string.IsNullOrWhiteSpace(idText) || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(heightText))
+                        if (string.IsNullOrWhiteSpace(pointIdText) || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(heightText))
                         {
                             // Логика обработки пустых значений, например, пропуск строки или возврат ошибки
                             continue; // или return BadRequest("Invalid data format in Excel file.");
                         }
 
-                        int id = int.Parse(idText);
+                        // Парсим значения
+                        int pointId = int.Parse(pointIdText);
                         int height = int.Parse(heightText);
 
                         // Создаем новую точку
                         var point = new Point
                         {
-                            Id = id,
+                            PointId = pointId, // Используем pointId как Id точки
                             Name = name,
                             Height = height
                         };

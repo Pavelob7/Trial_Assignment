@@ -1,84 +1,97 @@
 {
-  "1718912161": {
+  "1718915105": {
     "points": [
       {
         "id": 1,
-        "name": "Point 1",
-        "height": 160
+        "name": "\u0422\u043E\u0447\u043A\u0430 1",
+        "height": 16,
+        "uploadId": 21
       },
       {
         "id": 2,
-        "name": "Point 2",
-        "height": 170
+        "name": "\u0422\u043E\u0447\u043A\u0430 2",
+        "height": 342,
+        "uploadId": 21
       },
       {
         "id": 3,
-        "name": "Point 3",
-        "height": 180
+        "name": "\u0422\u043E\u0447\u043A\u0430 3",
+        "height": 800,
+        "uploadId": 21
       },
       {
         "id": 4,
-        "name": "Point 4",
-        "height": 175
+        "name": "\u0422\u043E\u0447\u043A\u0430 4",
+        "height": 913,
+        "uploadId": 21
       },
       {
         "id": 5,
-        "name": "Point 5",
-        "height": 165
+        "name": "\u0422\u043E\u0447\u043A\u0430 5",
+        "height": 895,
+        "uploadId": 21
       },
       {
         "id": 6,
-        "name": "Point 6",
-        "height": 192
+        "name": "\u0422\u043E\u0447\u043A\u0430 6",
+        "height": 375,
+        "uploadId": 21
       },
       {
         "id": 7,
-        "name": "Point 7",
-        "height": 137
+        "name": "\u0422\u043E\u0447\u043A\u0430 7",
+        "height": 74,
+        "uploadId": 21
       }
     ],
     "tracks": [
       {
         "firstId": 1,
         "secondId": 2,
-        "distance": 100,
+        "distance": 133,
         "surface": "ASPHALT",
-        "maxSpeed": "FAST"
+        "maxSpeed": "FAST",
+        "uploadId": 21
       },
       {
         "firstId": 2,
         "secondId": 3,
-        "distance": 200,
+        "distance": 105,
         "surface": "GROUND",
-        "maxSpeed": "NORMAL"
+        "maxSpeed": "NORMAL",
+        "uploadId": 21
       },
       {
         "firstId": 3,
         "secondId": 4,
-        "distance": 150,
+        "distance": 461,
         "surface": "SAND",
-        "maxSpeed": "SLOW"
+        "maxSpeed": "SLOW",
+        "uploadId": 21
       },
       {
         "firstId": 4,
         "secondId": 5,
-        "distance": 120,
+        "distance": 698,
         "surface": "SAND",
-        "maxSpeed": "NORMAL"
+        "maxSpeed": "NORMAL",
+        "uploadId": 21
       },
       {
         "firstId": 5,
         "secondId": 6,
-        "distance": 83,
+        "distance": 323,
         "surface": "ASPHALT",
-        "maxSpeed": "SLOW"
+        "maxSpeed": "SLOW",
+        "uploadId": 21
       },
       {
         "firstId": 6,
         "secondId": 7,
-        "distance": 74,
+        "distance": 721,
         "surface": "GROUND",
-        "maxSpeed": "FAST"
+        "maxSpeed": "FAST",
+        "uploadId": 21
       }
     ]
   }
