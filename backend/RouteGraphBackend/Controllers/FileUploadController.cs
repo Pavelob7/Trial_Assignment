@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using RouteGraphBackend.Data;
@@ -6,6 +7,7 @@ using RouteGraphBackend.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RouteGraphBackend.Controllers
@@ -59,9 +61,9 @@ namespace RouteGraphBackend.Controllers
 
                             points.Add(new Point
                             {
-                                Id = id,
                                 Name = name,
-                                Height = height
+                                Height = height,
+                                RouteId = routeId // Присваиваем RouteId текущего маршрута
                             });
 
                             string firstIdText = worksheet.Cells[row, 4].Text;
@@ -79,8 +81,8 @@ namespace RouteGraphBackend.Controllers
                                 int firstId = int.Parse(firstIdText);
                                 int secondId = int.Parse(secondIdText);
                                 int distance = int.Parse(distanceText);
-                                Surface surface = Enum.Parse<Surface>(surfaceText);
-                                MaxSpeed maxSpeed = Enum.Parse<MaxSpeed>(maxSpeedText);
+                                Surface surface = Enum.Parse<Surface>(surfaceText, true); // true для игнорирования регистра
+                                MaxSpeed maxSpeed = Enum.Parse<MaxSpeed>(maxSpeedText, true); // true для игнорирования регистра
 
                                 tracks.Add(new Track
                                 {
@@ -88,31 +90,42 @@ namespace RouteGraphBackend.Controllers
                                     SecondId = secondId,
                                     Distance = distance,
                                     Surface = surface,
-                                    MaxSpeed = maxSpeed
+                                    MaxSpeed = maxSpeed,
+                                    RouteId = routeId // Присваиваем RouteId текущего маршрута
                                 });
                             }
                         }
                     }
                 }
 
+                // Добавление точек и треков в контекст данных
                 _context.Points.AddRange(points);
                 _context.Tracks.AddRange(tracks);
+
+                // Сохранение изменений в базе данных
                 await _context.SaveChangesAsync();
 
-                var result = new
+                // Генерация структуры JSON для ответа
+                var routeId = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                var response = new Dictionary<long, object>
                 {
-                    points,
-                    tracks
+                    { routeId, new { points, tracks } }
                 };
 
-                return Ok(result);
+                return Ok(response);
             }
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Database update error: {ex.Message}");
+                // Если произошла ошибка сохранения в базу данных
+                var errorMessage = "Database update error";
+                if (ex.InnerException != null)
+                    errorMessage += ": " + ex.InnerException.Message;
+
+                return StatusCode(500, errorMessage);
             }
             catch (Exception ex)
             {
+                // В случае других внутренних ошибок сервера
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

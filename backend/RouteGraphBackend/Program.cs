@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using YourNamespace.Data;
+using RouteGraphBackend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddDbContext<RouteGraphBackend.Data.RouteContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddControllers();
+builder.Services.AddLogging(); // Добавляем логирование
 
 var app = builder.Build();
 
