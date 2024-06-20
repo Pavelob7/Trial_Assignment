@@ -1,0 +1,85 @@
+{
+  "1718912161": {
+    "points": [
+      {
+        "id": 1,
+        "name": "Point 1",
+        "height": 160
+      },
+      {
+        "id": 2,
+        "name": "Point 2",
+        "height": 170
+      },
+      {
+        "id": 3,
+        "name": "Point 3",
+        "height": 180
+      },
+      {
+        "id": 4,
+        "name": "Point 4",
+        "height": 175
+      },
+      {
+        "id": 5,
+        "name": "Point 5",
+        "height": 165
+      },
+      {
+        "id": 6,
+        "name": "Point 6",
+        "height": 192
+      },
+      {
+        "id": 7,
+        "name": "Point 7",
+        "height": 137
+      }
+    ],
+    "tracks": [
+      {
+        "firstId": 1,
+        "secondId": 2,
+        "distance": 100,
+        "surface": "ASPHALT",
+        "maxSpeed": "FAST"
+      },
+      {
+        "firstId": 2,
+        "secondId": 3,
+        "distance": 200,
+        "surface": "GROUND",
+        "maxSpeed": "NORMAL"
+      },
+      {
+        "firstId": 3,
+        "secondId": 4,
+        "distance": 150,
+        "surface": "SAND",
+        "maxSpeed": "SLOW"
+      },
+      {
+        "firstId": 4,
+        "secondId": 5,
+        "distance": 120,
+        "surface": "SAND",
+        "maxSpeed": "NORMAL"
+      },
+      {
+        "firstId": 5,
+        "secondId": 6,
+        "distance": 83,
+        "surface": "ASPHALT",
+        "maxSpeed": "SLOW"
+      },
+      {
+        "firstId": 6,
+        "secondId": 7,
+        "distance": 74,
+        "surface": "GROUND",
+        "maxSpeed": "FAST"
+      }
+    ]
+  }
+}

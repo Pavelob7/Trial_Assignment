@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
 
 namespace RouteGraphBackend.Models
 {
@@ -18,16 +20,16 @@ namespace RouteGraphBackend.Models
 
     public class Track
     {
-        public int Id { get; set; }
-        public int FirstId { get; set; } // Первая точка
-        public int SecondId { get; set; } // Вторая точка
+        public int TrackId { get; set; }
+        public int UploadId { get; set; }
+        public int FirstId { get; set; }
+        public int SecondId { get; set; }
         public int Distance { get; set; }
         public Surface Surface { get; set; }
         public MaxSpeed MaxSpeed { get; set; }
 
-        // Внешний ключ на маршрут
-        public int RouteId { get; set; }
-        public Route Route { get; set; }
+        [JsonIgnore]
+        public Upload Upload { get; set; }
     }
 
 }

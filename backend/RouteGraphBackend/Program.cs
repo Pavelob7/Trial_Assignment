@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using YourNamespace.Data;
-using RouteGraphBackend.Data;
+using RouteGraphBackend.Data; // Убедитесь, что это пространство имён правильное
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,19 +8,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Добавляем сервисы и контроллеры
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 builder.Services.AddDbContext<RouteGraphBackend.Data.RouteContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
 builder.Services.AddLogging(); // Добавляем логирование
 
 var app = builder.Build();
 
 // Настройка Swagger
-if (builder.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>

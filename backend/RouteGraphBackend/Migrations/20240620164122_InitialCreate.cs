@@ -12,16 +12,16 @@ namespace RouteGraphBackend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Routes",
+                name: "Uploads",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    UploadId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    UploadTime = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Routes", x => x.Id);
+                    table.PrimaryKey("PK_Uploads", x => x.UploadId);
                 });
 
             migrationBuilder.CreateTable(
@@ -30,53 +30,55 @@ namespace RouteGraphBackend.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Latitude = table.Column<double>(type: "double precision", nullable: false),
-                    Longitude = table.Column<double>(type: "double precision", nullable: false),
-                    Height = table.Column<double>(type: "double precision", nullable: false),
-                    RouteId = table.Column<int>(type: "integer", nullable: true)
+                    PointId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Height = table.Column<int>(type: "integer", nullable: false),
+                    UploadId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Points", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Points_Routes_RouteId",
-                        column: x => x.RouteId,
-                        principalTable: "Routes",
-                        principalColumn: "Id");
+                        name: "FK_Points_Uploads_UploadId",
+                        column: x => x.UploadId,
+                        principalTable: "Uploads",
+                        principalColumn: "UploadId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Tracks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    TrackId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UploadId = table.Column<int>(type: "integer", nullable: false),
                     FirstId = table.Column<int>(type: "integer", nullable: false),
                     SecondId = table.Column<int>(type: "integer", nullable: false),
-                    Distance = table.Column<double>(type: "double precision", nullable: false),
-                    MaxSpeed = table.Column<double>(type: "double precision", nullable: false),
-                    Surface = table.Column<string>(type: "text", nullable: false),
-                    RouteId = table.Column<int>(type: "integer", nullable: true)
+                    Distance = table.Column<int>(type: "integer", nullable: false),
+                    Surface = table.Column<int>(type: "integer", nullable: false),
+                    MaxSpeed = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tracks", x => x.Id);
+                    table.PrimaryKey("PK_Tracks", x => x.TrackId);
                     table.ForeignKey(
-                        name: "FK_Tracks_Routes_RouteId",
-                        column: x => x.RouteId,
-                        principalTable: "Routes",
-                        principalColumn: "Id");
+                        name: "FK_Tracks_Uploads_UploadId",
+                        column: x => x.UploadId,
+                        principalTable: "Uploads",
+                        principalColumn: "UploadId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Points_RouteId",
+                name: "IX_Points_UploadId",
                 table: "Points",
-                column: "RouteId");
+                column: "UploadId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tracks_RouteId",
+                name: "IX_Tracks_UploadId",
                 table: "Tracks",
-                column: "RouteId");
+                column: "UploadId");
         }
 
         /// <inheritdoc />
@@ -89,7 +91,7 @@ namespace RouteGraphBackend.Migrations
                 name: "Tracks");
 
             migrationBuilder.DropTable(
-                name: "Routes");
+                name: "Uploads");
         }
     }
 }

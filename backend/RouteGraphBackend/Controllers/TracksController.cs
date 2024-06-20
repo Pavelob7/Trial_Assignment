@@ -44,7 +44,7 @@ namespace RouteGraphBackend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTrack(int id, Track track)
         {
-            if (id != track.Id)
+            if (id != track.TrackId)
             {
                 return BadRequest();
             }
@@ -77,7 +77,7 @@ namespace RouteGraphBackend.Controllers
             _context.Tracks.Add(track);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTrack), new { id = track.Id }, track);
+            return CreatedAtAction(nameof(GetTrack), new { id = track.TrackId }, track);
         }
 
         // DELETE: api/Tracks/5
@@ -98,7 +98,7 @@ namespace RouteGraphBackend.Controllers
 
         private bool TrackExists(int id)
         {
-            return _context.Tracks.Any(e => e.Id == id);
+            return _context.Tracks.Any(e => e.TrackId == id);
         }
     }
 }
