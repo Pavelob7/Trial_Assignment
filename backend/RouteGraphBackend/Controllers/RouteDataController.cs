@@ -12,9 +12,9 @@ namespace RouteGraphBackend.Controllers
     [ApiController]
     public class RouteDataController : ControllerBase
     {
-        private readonly Data.RouteContext _context;
+        private readonly Data.RouteContext _context; // Контекст базы данных для работы с данными
 
-        public RouteDataController(Data.RouteContext context)
+        public RouteDataController(Data.RouteContext context) // Конструктор контроллера
         {
             _context = context;
         }
@@ -23,15 +23,18 @@ namespace RouteGraphBackend.Controllers
         [HttpGet("PointsAndTracks")]
         public async Task<IActionResult> GetPointsAndTracks()
         {
+            // Получаем все загрузки данных с точками и треками из базы данных
             var uploads = await _context.Uploads
-                .Include(u => u.Points)
-                .Include(u => u.Tracks)
+                .Include(u => u.Points) // Включаем точки связанные с каждой загрузкой
+                .Include(u => u.Tracks) // Включаем треки связанные с каждой загрузкой
                 .ToListAsync();
 
-            var response = new Dictionary<long, object>();
+            var response = new Dictionary<long, object>(); // Инициализируем словарь для ответа
 
+            // Обрабатываем каждую загрузку данных
             foreach (var upload in uploads)
             {
+                // Формируем список точек для текущей загрузки
                 var points = upload.Points.Select(p => new
                 {
                     id = p.PointId,
@@ -39,6 +42,7 @@ namespace RouteGraphBackend.Controllers
                     height = p.Height
                 }).ToList();
 
+                // Формируем список треков для текущей загрузки
                 var tracks = upload.Tracks.Select(t => new
                 {
                     firstId = t.FirstId,
@@ -48,10 +52,11 @@ namespace RouteGraphBackend.Controllers
                     maxSpeed = t.MaxSpeed.ToString().ToUpper()
                 }).ToList();
 
+                // Добавляем текущую загрузку в ответ с использованием времени загрузки как ключа
                 response[upload.UploadTime] = new { points, tracks };
             }
 
-            return Ok(response);
+            return Ok(response); // Возвращаем успешный ответ с сформированным JSON-ответом
         }
     }
 }

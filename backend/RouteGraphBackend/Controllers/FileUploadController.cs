@@ -22,9 +22,11 @@ namespace RouteGraphBackend.Controllers
             _context = context;
         }
 
+        // POST метод для загрузки файла
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
+            // Проверка наличия и корректности файла
             if (file == null || file.Length <= 0)
             {
                 return BadRequest("File is not selected or empty.");
@@ -32,10 +34,13 @@ namespace RouteGraphBackend.Controllers
 
             try
             {
+                // Начало транзакции для атомарного сохранения данных
                 using var transaction = await _context.Database.BeginTransactionAsync();
 
+                // Чтение данных из Excel файла
                 var (points, tracks) = await ReadPointsAndTracksFromExcel(file);
 
+                // Проверка на корректность данных из Excel
                 if (points == null || tracks == null)
                 {
                     return BadRequest("Invalid data format in Excel file.");
@@ -76,6 +81,7 @@ namespace RouteGraphBackend.Controllers
             }
         }
 
+        // Создание JSON-ответа на основе загруженного файла
         private async Task<string> CreateJsonResponse(IFormFile file, int uploadId)
         {
             var (points, tracks) = await ReadPointsAndTracksFromExcel(file);
@@ -117,6 +123,7 @@ namespace RouteGraphBackend.Controllers
             return jsonResponse;
         }
 
+        // Чтение данных (точек и треков) из Excel-файла
         private async Task<(List<Point>, List<Track>)> ReadPointsAndTracksFromExcel(IFormFile file)
         {
             var points = new List<Point>();
