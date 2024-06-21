@@ -1,12 +1,40 @@
-# Stage 2: Build backend .NET Core application
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS backend-build
+# Stage 1: Build the backend .NET Core application
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 
 WORKDIR /backend
 
-# Copy and restore as distinct layers
-COPY backend/*.csproj ./
+# Copy csproj and restore as distinct layers
+COPY backend/RouteGraphBackend/*.csproj ./
 RUN dotnet restore
 
-# Copy everything else and build
-COPY backend/ ./
+# Copy the rest of the application code
+COPY backend/RouteGraphBackend/. ./
+
+# Build the application
 RUN dotnet publish -c Release -o out
+
+# Stage 2: Setup Apache and the application
+FROM debian:12
+
+# Install Apache and necessary modules
+RUN apt-get update && apt-get install -y \
+    apache2 \
+    apache2-utils \
+    libapache2-mod-proxy-html \
+    libxml2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Enable Apache modules
+RUN a2enmod proxy proxy_http headers rewrite proxy_html
+
+# Copy the built .NET application from the previous stage
+COPY --from=build /backend/RouteGraphBackend/out /var/www/html/app
+
+# Configure Apache
+COPY backend/apache-config.conf /etc/apache2/sites-available/000-default.conf
+
+# Expose the port the app runs on
+EXPOSE 80
+
+# Start Apache
+CMD ["apachectl", "-D", "FOREGROUND"]

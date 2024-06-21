@@ -1,18 +1,26 @@
 # Stage 1: Build frontend React application
-FROM node:14 as frontend-build
+FROM node:latest as build
 
-WORKDIR /frontend
+WORKDIR /build
 
-# Copy package.json and yarn.lock files to the container
-COPY frontend/package.json ./package.json
+# Copy package.json and package-lock.json files to the container
+COPY frontend/package.json package.json
+COPY frontend/package-lock.json package-lock.json
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Copy the rest of the application code
-COPY frontend ./frontend
-
-WORKDIR /frontend/public
+COPY frontend/public public
+COPY frontend/src src
 
 # Build the application
-RUN npm run build || (cat /root/.npm/_logs/*-debug.log && exit 1)
+RUN npm run build
+
+# Stage 2: Serve the application with a lightweight HTTP server
+FROM httpd:alpine
+
+WORKDIR /usr/local/apache2/htdocs
+
+# Copy built files from the previous stage
+COPY --from=build /build/build/ .
