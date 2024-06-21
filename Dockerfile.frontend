@@ -1,0 +1,18 @@
+# Stage 1: Build frontend React application
+FROM node:14 as frontend-build
+
+WORKDIR /frontend
+
+# Copy package.json and yarn.lock files to the container
+COPY frontend/package.json ./package.json
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY frontend ./frontend
+
+WORKDIR /frontend/public
+
+# Build the application
+RUN npm run build || (cat /root/.npm/_logs/*-debug.log && exit 1)

@@ -1,0 +1,12 @@
+# Stage 2: Build backend .NET Core application
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS backend-build
+
+WORKDIR /backend
+
+# Copy and restore as distinct layers
+COPY backend/*.csproj ./
+RUN dotnet restore
+
+# Copy everything else and build
+COPY backend/ ./
+RUN dotnet publish -c Release -o out
