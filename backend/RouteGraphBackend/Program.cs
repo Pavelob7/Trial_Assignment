@@ -4,6 +4,7 @@ using System.Text.Json;
 using RouteGraphBackend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://*:5000");
 
 // Добавляем поддержку Swagger
 builder.Services.AddEndpointsApiExplorer(); // Добавляем поддержку генерации спецификаций OpenAPI
