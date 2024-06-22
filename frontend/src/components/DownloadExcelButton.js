@@ -7,7 +7,7 @@ const DownloadExcelButton = () => {
     // Функция для скачивания файла
     const downloadFile = () => {
         // URL файла для скачивания (в данном случае, примерный путь к файлу)
-        const fileUrl = process.env.PUBLIC_URL + '/excels/example.xlsx';
+        const fileUrl = process.env.PUBLIC_URL + '\excels\data.xlsx';
 
         // Создание элемента <a> для скачивания файла
         const link = document.createElement('a');

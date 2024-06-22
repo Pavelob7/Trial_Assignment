@@ -15,27 +15,27 @@ const RouteGraph = () => {
     const [selectedRoute, setSelectedRoute] = useState(null); // Выбранный маршрут
 
     // Загрузка данных с сервера при монтировании компонента
-    useEffect(() => {
-        // Функция для загрузки данных с сервера
-        const fetchData = () => {
-            fetch('/api/routeData/PointsAndTracks') // Путь к вашему API
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then((json) => {
-                    console.log("Data fetched:", json);
-                    setData(json);
-                    const firstRoute = Object.keys(json)[0];
-                    setSelectedRoute(firstRoute);
-                })
-                .catch((error) => {
-                    console.error("Error fetching data:", error);
-                });
-        };
+    const fetchData = () => {
+        fetch('https://localhost:5000/api/routeData/PointsAndTracks') // Путь к вашему API
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((json) => {
+                console.log("Data fetched:", json);
+                setData(json);
+                const firstRoute = Object.keys(json)[0];
+                setSelectedRoute(firstRoute);
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+    };
 
+    // Загрузка данных с сервера при монтировании компонента
+    useEffect(() => {
         fetchData();
     }, []); // Пустой массив зависимостей для выполнения эффекта один раз при монтировании
 
@@ -44,16 +44,14 @@ const RouteGraph = () => {
         const formData = new FormData();
         formData.append('file', file);
 
-        fetch('/api/FileUpload/upload', { // Путь к API методу загрузки файла
+        fetch('https://localhost:5000/api/FileUpload/upload', { // Путь к API методу загрузки файла
             method: 'POST',
             body: formData,
         })
             .then(response => response.json())
             .then(jsonResponse => {
                 console.log('JSON response from server:', jsonResponse);
-                setData(jsonResponse); // Обновляем данные с сервера
-                const firstRoute = Object.keys(jsonResponse)[0];
-                setSelectedRoute(firstRoute); // Устанавливаем первый маршрут после обновления данных
+                fetchData(); // Заново вызываем fetchData для получения обновленных данных
             })
             .catch(error => {
                 console.error('Ошибка при загрузке файла на сервер:', error);
@@ -192,7 +190,6 @@ const RouteGraph = () => {
                         ]}
                         yAxis={[
                             {
-                                label: "Высота контрольной точки",
                                 min: 0,
                                 max: maxYValue
                             }

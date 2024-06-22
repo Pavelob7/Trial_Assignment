@@ -7,7 +7,7 @@ namespace RouteGraphBackend.Models
     {
         public int UploadId { get; set; }
         public long UploadTime { get; set; }
-
+ 
         [JsonIgnore]
         public ICollection<Point> Points { get; set; }
 
